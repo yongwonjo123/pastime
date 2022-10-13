@@ -1,0 +1,134 @@
+body {
+	position: relative;
+	min-height: 100vh;
+	padding-bottom: 280px;
+	box-sizing: border-box;
+}
+
+footer {
+	background: rgb(0, 0, 0);
+	font-family: var(--noto);
+	color: white;
+}
+
+.footerall {
+	width: 1200px;
+	height: 170px;
+	align-items: center;
+	display: flex;
+	justify-content: flex-start;
+}
+
+.teamList {
+	margin-left: 100px;
+}
+
+#footerdown {
+	height: 20px;
+	background-color: #F2F2F0;
+	color: black;
+	font-family: var(- -noto);
+	display: flex;
+	align-items: center;
+}
+
+.footer {
+	align-items: center;
+	justify-content: center;
+	display: flex;
+}
+
+#logoimgsize {
+	width: 400px;
+	height: 200px;
+}
+
+.logosize {
+	width: 140px;
+	height: 45px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.logoimg {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.textflex {
+	display: flex;
+}
+
+.footerimgsize {
+	width: 52px;
+	height: 52px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.footerimg {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.footpadding {
+	padding: 0px 20px 0px 20px;
+}
+
+.flexcenter {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin: 0px 35px 0px 15px;
+}
+
+.menu-center {
+	text-align: left;
+	margin-bottom: 35px;
+}
+
+.qr-center {
+	text-align: center;
+}
+
+.qrsize {
+	width: 120px;
+	height: 120px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.qrimg {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.qrmenu {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.maringtop {
+	margin-bottom: 120px;
+}
+
+.gitname {
+	margin-top: 10px;
+}
+
+.footer-wrapper {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+}

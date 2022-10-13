@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="club">
+	<sql id="search">
+		<where>
+			<!-- 관리자 페이지에서 검색할 때 사용 -->
+			<if test="search == 1">
+				club.name LIKE CONCAT('%', #{keyword}, '%')
+				OR
+				UPPER(club.intro) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR
+				DATE(club.date) = #{keyword}
+			</if>
+			<!-- 마이페이지에서 사용 -->
+			<if test="search == 2">
+				UPPER(club.id) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR
+				club.name LIKE CONCAT('%', #{keyword}, '%')
+				OR
+				UPPER(club.intro) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR
+				DATE(club.date) = #{keyword}
+			</if>
+		</where>
+	</sql>
+	<sql id="table">
+		SELECT club.*,
+		club_image.code AS image_code,
+		club_image.target, club_image.filename, club_image.uuid,
+		member.name
+		FROM club
+		LEFT JOIN club_image ON
+		club_image.target=club.code
+		JOIN member
+		ON member.id=club.id
+	</sql>
+
+	<resultMap type="Club" id="ClubMap">
+		<id column="code" property="code" />
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="intro" property="intro" />
+		<result column="start_date" property="startDate" />
+		<result column="end_date" property="endDate" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="repeat_recycle" property="repeatRecycle" />
+		<result column="repeat_day" property="repeatDay" />
+		<result column="place_name" property="placeName" />
+		<result column="place_id" property="placeId" />
+		<result column="place_formatted" property="placeFormatted" />
+		<result column="category" property="category" />
+		<result column="membernum" property="membernum" />
+		<result column="content" property="content" />
+		<result column="date" property="date" />
+		<result column="price" property="price" />
+		<result column="state" property="state" />
+
+		<collection property="images" javaType="ArrayList"
+			ofType="Image">
+			<id column="image_code" property="code" />
+			<result column="target" property="target" />
+			<result column="filename" property="filename" />
+			<result column="uuid" property="uuid" />
+		</collection>
+	</resultMap>
+
+	<insert id="add">
+		INSERT INTO club 
+		VALUES(NULL, #{id}, #{name}, #{intro},#{startDate},#{endDate},#{startTime},#{endTime}, #{repeatRecycle}, #{repeatDay}, #{placeId},#{placeName},#{placeFormatted},#{category},#{membernum},#{content},NOW(),#{price},'진행중')
+		<selectKey order="AFTER" resultType="Integer"
+			keyProperty="code">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<select id="item" resultMap="ClubMap">
+		<include refid="table" />
+		WHERE club.code=#{code}
+	</select>
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*)
+		FROM club
+		<include refid="search" />
+	</select>
+	<select id="list" resultMap="ClubMap">
+		<include refid="table" />
+		WHERE club.code IN (SELECT *
+		FROM ((SELECT code
+		FROM club
+		<include refid="search" />
+		LIMIT #{offset}, #{perPage}) AS t1))
+	</select>
+	<delete id="delete">
+		DELETE FROM club
+		WHERE code=#{code}
+	</delete>
+	<update id="update">
+		UPDATE club
+		SET
+		name=#{name},
+		intro=#{intro},
+		place=#{place}
+		WHERE code=#{code}
+	</update>
+</mapper>

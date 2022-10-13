@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="notice">
+	<sql id="search">
+		<where>
+			<!-- 관리자 페이지에서 검색할 때 사용 -->
+			<if test="search == 1">
+				notice.code LIKE CONCAT('%', #{keyword}, '%')
+				OR
+				UPPER(notice.id) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR
+				DATE(notice.date) = #{keyword}
+			</if>
+			<!-- 마이페이지에서 사용 -->
+			<if test="search == 2">
+				UPPER(notice.id) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+			</if>
+		</where>
+	</sql>
+	<sql id="table">
+		SELECT notice.*,
+		notice_image.code AS image_code,
+		notice_image.target, notice_image.filename, notice_image.uuid,
+		member.name
+		FROM notice
+		LEFT JOIN notice_image ON
+		notice_image.target=notice.code
+		JOIN member
+		ON member.id=notice.id
+	</sql>
+
+	<resultMap type="Notice" id="NoticeMap">
+		<id column="code" property="code" />
+		<result column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="date" property="date" />
+		<result column="content" property="content" />
+		<result column="read_count" property="readCount" />
+	
+
+		<collection property="images" javaType="ArrayList"
+			ofType="Image">
+			<id column="image_code" property="code" />
+			<result column="target" property="target" />
+			<result column="filename" property="filename" />
+			<result column="uuid" property="uuid" />
+		</collection>
+	</resultMap>
+
+	<insert id="add">
+		INSERT INTO notice
+		VALUES(NULL, #{id}, #{title},NOW(),#{content},NULL)
+
+		<selectKey order="AFTER" resultType="Integer"
+			keyProperty="code">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<select id="item" resultMap="NoticeMap">
+		<include refid="table" />
+		WHERE notice.code=#{code}
+	</select>
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*)
+		FROM notice
+		<include refid="search" />
+	</select>
+	<select id="list" resultMap="NoticeMap">
+		<include refid="table" />
+		WHERE notice.code IN (SELECT *
+		FROM ((SELECT code
+		FROM notice
+		<include refid="search" />
+		LIMIT #{offset}, #{perPage}) AS t1))
+	</select>
+	<delete id="delete">
+		DELETE FROM notice
+		WHERE code=#{code}
+	</delete>
+	<update id="update">
+		UPDATE notice
+		SET
+		content=#{content},
+		title=#{title}
+		WHERE code=#{code}
+	</update>
+</mapper>

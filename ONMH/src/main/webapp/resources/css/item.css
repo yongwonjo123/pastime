@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+.subbox {
+	width: 350px;
+	height: 350px;
+	background-color: white;
+	border-radius: 50px;
+}
+
+.subtextbox {
+	width: 550px;
+	height: auto;
+}
+
+.subfont {
+	font-size: 40px;
+}
+.textfont {
+	font-size: var(--font-size-medium);
+	color : var(--color-gray);
+}
+.subpricetext {
+	font-size: var(--font-size-medium);
+	font-weight: var(--font-weight-bold);
+}
+.subprice {
+	font-size: var(--font-size-medium);
+	font-weight: 500;
+	color : var(--color-gray);
+}
+.pricefont {
+	color:#4cb95b;
+
+	font-size: 32px;
+}
+
+form button {
+	width: 550px;
+	height: 65px;
+	background-color: #dc2329;
+	color: white;
+	border:none;
+	border-radius: 20px;
+	font-size: var(--font-size-medium);
+	font-weight: 500;
+}
+.hrstyle {
+	opacity: 20%;
+}
+.hrop {
+	opacity: 40%;
+}
+.subtextline {
+	width: 85px;
+	height: 5px;
+	background-color: var(--logo-color);
+}
+
+.mftfont {
+	font-size: 22px;
+	color: var(--color-gray);
+	font-weight: 500;
+}
+.namefont {
+	font-size: var(--font-size-xlarge);
+	font-weight: var(--font-weight-bold);
+}
+.productfont {
+	font-size: 22px;
+	font-weight: var(--font-weight-bold);
+}
+.cartbtn {
+	width: 130px;
+	height: 65px;
+	background-color: #d3d3d3;
+	color: #555555;
+	border:none;
+	border-radius: 5px;
+	font-size: 20px;
+	font-weight: var(--font-weight-bold);
+	font-weight: 500;
+	background-repeat: no-repeat;
+	background-position: left 40px center;
+	text-align: center;
+	cursor: pointer;
+}
+
+#cartMsg {
+	display: none;
+	position: absolute;
+	transform: translate(0px, 12%);
+    height: 30px;
+    line-height: 30px;
+    background: #d4edda;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 1000;
+    text-align: center;
+    box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
+    font-weight: 700;
+}
+
+#cartMsg > a {
+	margin-left: 10px;
+	color: green;
+	text-decoration: none;
+}
+
+.paybtn {
+	background-color: #FF7900;
+	color: white;
+	border:none;
+	border-radius: 5px;
+	font-size: 20px;
+	font-weight: var(--font-weight-bold);
+	font-weight: 500;
+	border-radius: 5px;
+	display: inline-block;
+	padding: 18px 130px;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+#amount{
+	width: 30px;
+	text-align: center;
+	margin : 0 10px;
+}
+#amount::-webkit-outer-spin-button,
+#amount::-webkit-inner-spin-button {
+	 -webkit-appearance: none;
+	 margin: 0;
+}

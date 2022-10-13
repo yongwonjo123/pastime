@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="ordered_club">
+	<sql id="search">
+		<where>
+			<if test="search == 1">
+				ocode = CAST(#{keyword} AS UNSIGNED)
+			</if>
+		</where>
+	</sql>
+	<sql id="table">
+		SELECT ordered_club.*,
+			club.name, club.price, club.intro, club.content,
+			club_image.code AS imagecode, club_image.target, club_image.filename, club_image.uuid
+		FROM ordered_club
+		JOIN club ON club.code=ordered_club.ccode
+		LEFT JOIN club_image ON club.code=club_image.target
+	</sql>
+	
+	<resultMap type="OrderedClub" id="OrderedClubMap">
+		<id column="code" property="code"/>
+		<result column="ccode" property="ccode"/>
+		<result column="ocode" property="ocode"/>
+		<result column="orderid" property="orderid"/>
+		<result column="amount" property="amount"/>
+		<result column="name" property="name"/>
+		<result column="price" property="price"/>
+		<result column="intro" property="intro"/>
+		<result column="content" property="content"/>
+		<result column="startDate" property="startDate" />
+		<result column="endDate" property="endDate" />
+		<result column="startTime" property="startTime" />
+		<result column="endTime" property="endTime" />
+		<result column="repeatRecycle" property="repeatRecycle" />
+		<result column="repeatDay" property="repeatDay" />
+		<result column="placeName" property="placeName" />
+		<result column="placeId" property="placeId" />
+		
+		<collection property="images" javaType="ArrayList" ofType="Image">
+			<id column="imagecode" property="code"/>
+			<result column="target" property="target"/>
+			<result column="filename" property="filename"/>
+			<result column="uuid" property="uuid"/>
+		</collection>
+	</resultMap>
+
+	<insert id="add">
+		INSERT INTO ordered_club
+		VALUES(NULL, #{ccode}, #{ocode},#{amount})
+		<selectKey order="AFTER" resultType="Integer"
+			keyProperty="code">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<select id="item" resultMap="OrderedClubMap">
+		<include refid="table"/>
+		WHERE code=#{code}
+	</select>
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*)
+		FROM ordered_club
+		<include refid="search" />
+	</select>
+	<select id="list" resultMap="OrderedClubMap">
+		<include refid="table"/>
+		<include refid="search"/>
+	</select>
+	<delete id="delete">
+		DELETE FROM ordered_club
+		WHERE ocode=#{code}
+	</delete>
+	<update id="update">
+		UPDATE ordered_club
+		SET
+		ccode=#{ccode},
+		amount=#{amount}
+		WHERE code=#{code}
+	</update>
+</mapper>

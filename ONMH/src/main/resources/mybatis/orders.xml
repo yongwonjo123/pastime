@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="orders">
+	<sql id="search">
+		<where>
+			<choose>
+				<when test="search == 1">
+					<!-- 관리자 페이지에서 검색할 때 사용 -->
+					(code LIKE CONCAT('%', #{keyword}, '%')
+					OR UPPER(id) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+					OR DATE(date) = #{keyword})
+					AND subscribe=#{keyword2}
+				</when>
+				<when test="search == 2">
+					<!-- 마이페이지에서 회원의 정보를 볼 때 사용 -->
+					subscribe=#{keyword2} AND id=#{keyword}
+				</when>
+				<when test="search == 3">
+					<!-- 회원의 마지막 구독을 확인 할 때 사용 -->
+					id=#{keyword}
+					AND subscribe IN ('y', 'c')
+				</when>
+				<otherwise>
+					<!-- 그냥 list를 할 때 사용, 주문과 구독을 구분할 때 사용 -->
+					subscribe=#{keyword2}
+				</otherwise>
+			</choose>
+		</where>
+	</sql>
+	<sql id="order">
+		<if test="order == 1">
+			ORDER BY date DESC
+		</if>
+	</sql>
+	
+	<insert id="add">
+		INSERT INTO orders
+		VALUES(NULL, #{id}, NOW(), #{subscribe}, #{total})
+		
+		<selectKey keyProperty="code" order="AFTER" resultType="Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<select id="item" resultType="Orders">
+		SELECT *
+		FROM orders
+		WHERE code=#{code}
+	</select>
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*)
+		FROM orders
+		<include refid="search" />
+	</select>
+	<select id="list" resultType="Orders">
+		SELECT *
+		FROM orders
+		<include refid="search" />
+		<include refid="order"/>
+		LIMIT #{offset}, #{perPage}
+	</select>
+	<delete id="delete">
+		DELETE FROM orders
+		WHERE code=#{code}
+	</delete>
+	<update id="update">
+		UPDATE orders
+		SET
+		total=#{total},
+		subscribe=#{subscribe}
+		WHERE code=#{code}
+	</update>
+</mapper>

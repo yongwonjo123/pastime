@@ -1,0 +1,11 @@
+.confirm-wrapper{
+	background: var(--color-white);
+	padding: 200px 0;
+}
+.confirm-form{
+	background: #c5c6d0;
+	width: 280px;
+	margin: 0 auto;
+	padding: 15px 10px;
+	border-radius: 5px;
+}

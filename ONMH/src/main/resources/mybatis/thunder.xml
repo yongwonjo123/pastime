@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="thunder">
+	<sql id="search">
+		<where>
+			<!-- 관리자 페이지에서 검색할 때 사용 -->
+			<if test="search == 1">
+				thunder.code LIKE CONCAT('%', #{keyword}, '%')
+				OR
+				UPPER(thunder.id) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR
+				DATE(thunder.date) = #{keyword}
+			</if>
+			<!-- 마이페이지에서 사용 -->
+			<if test="search == 2">
+				UPPER(thunder.id) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+			</if>
+		</where>
+	</sql>
+	<sql id="table">
+		SELECT thunder.*,
+		thunder_image.code AS image_code,
+		thunder_image.target, thunder_image.filename, thunder_image.uuid,
+		member.name
+		FROM thunder
+		LEFT JOIN thunder_image ON
+		thunder_image.target=thunder.code
+		JOIN member
+		ON member.id=thunder.id
+	</sql>
+
+	<resultMap type="Thunder" id="ThunderMap">
+		<id column="code" property="code" />
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="intro" property="intro" />
+		<result column="category" property="category" />
+		<result column="city" property="city" />
+		<result column="district" property="district" />
+		<result column="membernum" property="membernum" />
+		<result column="hashtag" property="hashtag" />
+		<result column="content" property="content" />
+		<result column="date" property="date" />
+		<result column="rdate" property="rdate" />
+		<result column="place" property="place" />
+
+		<collection property="images" javaType="ArrayList"
+			ofType="Image">
+			<id column="image_code" property="code" />
+			<result column="target" property="target" />
+			<result column="filename" property="filename" />
+			<result column="uuid" property="uuid" />
+		</collection>
+	</resultMap>
+
+	<insert id="add">
+		INSERT INTO thunder
+		VALUES(NULL, #{id}, #{name},
+		#{intro},#{category},#{city},#{district},#{membernum},#{hashtag},#{content},NOW(),NOW(),#{place})
+
+		<selectKey order="AFTER" resultType="Integer"
+			keyProperty="code">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	<select id="item" resultMap="ThunderMap">
+		<include refid="table" />
+		WHERE thunder.code=#{code}
+	</select>
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*)
+		FROM thunder
+		<include refid="search" />
+	</select>
+	<select id="list" resultMap="ThunderMap">
+		<include refid="table" />
+		WHERE thunder.code IN (SELECT *
+		FROM ((SELECT code
+		FROM thunder
+		<include refid="search" />
+		LIMIT #{offset}, #{perPage}) AS t1))
+	</select>
+	<delete id="delete">
+		DELETE FROM thunder
+		WHERE code=#{code}
+	</delete>
+	<update id="update">
+		UPDATE thunder
+		SET
+		content=#{content},
+		name=#{name}
+		WHERE code=#{code}
+	</update>
+</mapper>
